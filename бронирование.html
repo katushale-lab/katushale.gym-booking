@@ -1,0 +1,395 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0">
+  <title>Бронирование залов · Июнь 2026</title>
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Segoe UI', system-ui, sans-serif;
+      background: #f1f5f9;
+      color: #1e293b;
+      padding: 1rem;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+    .container {
+      width: 100%;
+      max-width: 1700px;
+      background: white;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.08);
+      padding: 1.8rem 1.5rem;
+    }
+    h1 {
+      font-size: 2rem;
+      font-weight: 700;
+      color: #0f2b4b;
+      margin-bottom: 0.2rem;
+    }
+    .subtitle {
+      color: #475569;
+      margin-bottom: 1.5rem;
+      font-size: 0.95rem;
+    }
+    .status-bar {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.2rem;
+      gap: 1rem;
+    }
+    .sync-badge {
+      padding: 0.4rem 1rem;
+      border-radius: 20px;
+      font-size: 0.85rem;
+      font-weight: 500;
+    }
+    .online { background: #dcfce7; color: #166534; }
+    .offline { background: #fee2e2; color: #991b1b; }
+    .syncing { background: #fef9c3; color: #854d0e; }
+    .btn {
+      padding: 0.5rem 1.2rem;
+      border-radius: 30px;
+      border: 1px solid #d1d5db;
+      background: white;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.2s;
+      font-size: 0.9rem;
+    }
+    .btn:hover { background: #f3f4f6; border-color: #9ca3af; }
+    .btn-danger { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
+    .btn-danger:hover { background: #fee2e2; }
+    .legend {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 1.5rem;
+      margin-bottom: 1.5rem;
+      font-size: 0.85rem;
+    }
+    .legend-item { display: flex; align-items: center; gap: 0.4rem; }
+    .dot { width: 12px; height: 12px; border-radius: 4px; }
+    .dot-big { background: #2563eb; }
+    .dot-medium { background: #0d9488; }
+    .dot-acro { background: #d97706; }
+    .dot-square { background: #7c3aed; }
+    .table-wrapper {
+      overflow-x: auto;
+      border: 1px solid #e5e7eb;
+      border-radius: 14px;
+      max-height: 70vh;
+      overflow-y: auto;
+    }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.75rem;
+      min-width: 1400px;
+    }
+    th {
+      background: #f8fafc;
+      padding: 0.55rem 0.3rem;
+      text-align: center;
+      border: 1px solid #d1d5db;
+      position: sticky;
+      top: 0;
+      z-index: 3;
+      font-weight: 650;
+    }
+    .time-col {
+      background: #f1f5f9;
+      width: 85px;
+      font-weight: 700;
+      z-index: 4;
+      left: 0;
+      position: sticky;
+    }
+    td {
+      border: 1px solid #e5e7eb;
+      padding: 0.25rem;
+      text-align: center;
+      background: white;
+    }
+    .cell-input {
+      width: 100%;
+      border: none;
+      background: transparent;
+      font-size: 0.72rem;
+      text-align: center;
+      padding: 0.3rem 0.1rem;
+      border-radius: 6px;
+      outline: none;
+      font-weight: 500;
+    }
+    .cell-input:focus {
+      background: #eff6ff;
+      box-shadow: 0 0 0 2px #3b82f6;
+    }
+    .cell-input::placeholder { color: #cbd5e1; font-style: italic; }
+    .day-header { font-weight: 700; background: #f8fafc; }
+    .weekend { background: #fff7ed; }
+    .toast {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #1e293b;
+      color: white;
+      padding: 0.7rem 1.4rem;
+      border-radius: 12px;
+      font-size: 0.9rem;
+      z-index: 99;
+      opacity: 0;
+      transition: opacity 0.3s;
+      pointer-events: none;
+    }
+    .toast.show { opacity: 1; }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h1>📅 Бронирование залов — Июнь 2026</h1>
+  <p class="subtitle">Впишите фамилию в нужный слот. Данные синхронизируются через Google Таблицу.</p>
+
+  <div class="legend">
+    <span class="legend-item"><span class="dot dot-big"></span> Большой</span>
+    <span class="legend-item"><span class="dot dot-medium"></span> Средний</span>
+    <span class="legend-item"><span class="dot dot-acro"></span> Акро</span>
+    <span class="legend-item"><span class="dot dot-square"></span> Квадратный</span>
+  </div>
+
+  <div class="status-bar">
+    <div>
+      <span class="sync-badge" id="syncStatus">🔄 Загрузка...</span>
+      <span style="margin-left: 0.5rem; font-size:0.8rem; color:#64748b;" id="lastSyncTime"></span>
+    </div>
+    <div style="display: flex; gap: 0.5rem;">
+      <button class="btn" id="refreshBtn">🔄 Обновить</button>
+      <button class="btn" id="exportBtn">📥 Скачать CSV</button>
+      <button class="btn btn-danger" id="clearBtn">🗑 Очистить всё</button>
+    </div>
+  </div>
+
+  <div class="table-wrapper" id="tableWrapper"></div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+  // ═══════════════ НАСТРОЙКИ (ЗАМЕНИТЕ НА СВОИ) ═══════════════
+  const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwq3rQDMywIEtO7bVMtAl0dcKuz5dPA3lpG3Abj4MoxrINdazNDbNlsfgwckvh6d94/exec;
+const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR-j1Qs7Hn4dShT0CG9jTtGqA7yVD8bZT1NBjZEHxr1kHoP6ZgeiGdHIUvzq936N6OniJgq7cH9Lrq-/pub?gid=0&single=true&output=csv'; 
+  // ════════════════════════════════════════════════════════════
+
+  const YEAR = 2026;
+  const MONTH = 5; // Июнь
+  const HALLS = ["Большой", "Средний", "Акро", "Квадратный"];
+  const START_HOUR = 9;
+  const END_HOUR = 23;
+
+  function generateTimeSlots() {
+    const slots = [];
+    for (let h = START_HOUR; h < END_HOUR; h++) {
+      for (let m = 0; m < 60; m += 30) {
+        const start = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+        const endH = m === 30 ? h + 1 : h;
+        const endM = m === 30 ? 0 : 30;
+        const end = `${String(endH).padStart(2,'0')}:${String(endM).padStart(2,'0')}`;
+        slots.push(`${start}-${end}`);
+      }
+    }
+    return slots;
+  }
+
+  const TIME_SLOTS = generateTimeSlots();
+
+  function getDaysInMonth(year, month) {
+    const days = [];
+    const d = new Date(year, month, 1);
+    while (d.getMonth() === month) {
+      days.push(new Date(d));
+      d.setDate(d.getDate() + 1);
+    }
+    return days;
+  }
+
+  const DAYS = getDaysInMonth(YEAR, MONTH);
+
+  let bookingData = {}; // { "2026-06-05": { "09:00-09:30": { "Большой": "Иванов" } } }
+
+  function getDayKey(date) {
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2,'0');
+    const d = String(date.getDate()).padStart(2,'0');
+    return `${y}-${m}-${d}`;
+  }
+
+  // Загрузить данные из Google Sheets
+  async function loadFromSheet() {
+    setSyncStatus('syncing', 'Синхронизация...');
+    try {
+      const resp = await fetch(SHEET_CSV_URL, { cache: 'no-store' });
+      const csv = await resp.text();
+      const rows = csv.trim().split('\n').slice(1);
+      
+      bookingData = {};
+      for (const row of rows) {
+        const cols = row.split(',');
+        if (cols.length < 4) continue;
+        const day = cols[0].trim();
+        const timeSlot = cols[1].trim();
+        const hall = cols[2].trim();
+        const trainer = cols[3]?.trim() || '';
+        
+        if (!day || !timeSlot || !hall) continue;
+        if (!bookingData[day]) bookingData[day] = {};
+        if (!bookingData[day][timeSlot]) bookingData[day][timeSlot] = {};
+        bookingData[day][timeSlot][hall] = trainer;
+      }
+      
+      setSyncStatus('online', 'Данные загружены');
+      document.getElementById('lastSyncTime').textContent = 
+        new Date().toLocaleTimeString('ru-RU');
+      renderTable();
+    } catch (e) {
+      console.error('Ошибка загрузки:', e);
+      setSyncStatus('offline', 'Нет связи с таблицей');
+    }
+  }
+
+  // Отправить изменение в Google Sheets
+  async function sendToSheet(day, timeSlot, hall, trainer) {
+    try {
+      const url = `${SCRIPT_URL}?action=add&day=${encodeURIComponent(day)}&time=${encodeURIComponent(timeSlot)}&hall=${encodeURIComponent(hall)}&trainer=${encodeURIComponent(trainer)}`;
+      await fetch(url, { method: 'GET', mode: 'no-cors' });
+      setSyncStatus('online', 'Сохранено');
+    } catch (e) {
+      setSyncStatus('offline', 'Ошибка сохранения');
+      showToast('⚠️ Не удалось сохранить. Проверьте интернет.');
+    }
+  }
+
+  // Очистить всё через скрипт
+  async function clearAll() {
+    if (!confirm('Удалить ВСЕ записи за июнь? Это необратимо.')) return;
+    try {
+      await fetch(`${SCRIPT_URL}?action=clear`, { method: 'GET', mode: 'no-cors' });
+      showToast('✅ Таблица очищена');
+      await loadFromSheet();
+    } catch (e) {
+      showToast('❌ Ошибка очистки');
+    }
+  }
+
+  function setSyncStatus(state, text) {
+    const el = document.getElementById('syncStatus');
+    el.textContent = text;
+    el.className = 'sync-badge ' + state;
+  }
+
+  function showToast(msg) {
+    const t = document.getElementById('toast');
+    t.textContent = msg;
+    t.classList.add('show');
+    setTimeout(() => t.classList.remove('show'), 2500);
+  }
+
+  function renderTable() {
+    const wrapper = document.getElementById('tableWrapper');
+    let html = '<table><thead><tr><th class="time-col">Время</th>';
+
+    DAYS.forEach(day => {
+      const dow = day.toLocaleDateString('ru-RU', { weekday: 'short' });
+      const dnum = day.getDate();
+      const isWeekend = day.getDay() === 0 || day.getDay() === 6;
+      html += `<th class="day-header${isWeekend ? ' weekend' : ''}" colspan="4">${dnum} ${dow}</th>`;
+    });
+    html += '</tr><tr><th class="time-col"></th>';
+
+    DAYS.forEach(() => {
+      HALLS.forEach(h => {
+        let cls = '';
+        if (h === 'Большой') cls = 'dot-big';
+        else if (h === 'Средний') cls = 'dot-medium';
+        else if (h === 'Акро') cls = 'dot-acro';
+        else cls = 'dot-square';
+        html += `<th style="font-size:0.7rem;"><span class="dot ${cls}" style="display:inline-block;width:9px;height:9px;margin-right:4px;"></span>${h}</th>`;
+      });
+    });
+    html += '</tr></thead><tbody>';
+
+    TIME_SLOTS.forEach(slot => {
+      html += '<tr><td class="time-col">' + slot + '</td>';
+      DAYS.forEach(day => {
+        const dk = getDayKey(day);
+        HALLS.forEach(hall => {
+          const val = bookingData[dk]?.[slot]?.[hall] || '';
+          html += `<td><input class="cell-input" value="${escHtml(val)}" 
+                      placeholder="—" data-day="${dk}" data-slot="${slot}" data-hall="${hall}"></td>`;
+        });
+      });
+      html += '</tr>';
+    });
+
+    html += '</tbody></table>';
+    wrapper.innerHTML = html;
+
+    // Навешиваем события
+    document.querySelectorAll('.cell-input').forEach(inp => {
+      inp.addEventListener('change', function() {
+        const d = this.dataset.day;
+        const s = this.dataset.slot;
+        const h = this.dataset.hall;
+        const v = this.value.trim();
+        
+        // Локально обновляем
+        if (!bookingData[d]) bookingData[d] = {};
+        if (!bookingData[d][s]) bookingData[d][s] = {};
+        bookingData[d][s][h] = v || '';
+        
+        // Отправляем на сервер
+        sendToSheet(d, s, h, v);
+      });
+    });
+  }
+
+  function escHtml(s) {
+    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  function exportCSV() {
+    let csv = 'Дата,Время,Зал,Тренер\n';
+    for (const day of DAYS) {
+      const dk = getDayKey(day);
+      const ds = day.toLocaleDateString('ru-RU');
+      for (const slot of TIME_SLOTS) {
+        for (const hall of HALLS) {
+          const v = bookingData[dk]?.[slot]?.[hall];
+          if (v) csv += `${ds},${slot},${hall},"${v}"\n`;
+        }
+      }
+    }
+    const blob = new Blob(['\uFEFF' + csv], { type: 'text/csv;charset=utf-8;' });
+    const a = document.createElement('a');
+    a.href = URL.createObjectURL(blob);
+    a.download = 'бронирование_июнь_2026.csv';
+    a.click();
+  }
+
+  // Привязка кнопок
+  document.getElementById('refreshBtn').addEventListener('click', loadFromSheet);
+  document.getElementById('clearBtn').addEventListener('click', clearAll);
+  document.getElementById('exportBtn').addEventListener('click', exportCSV);
+
+  // Старт
+  loadFromSheet();
+  // Автообновление каждые 30 секунд
+  setInterval(loadFromSheet, 30000);
+</script>
+
+</body>
+</html>
