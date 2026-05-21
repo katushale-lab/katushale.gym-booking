@@ -164,10 +164,11 @@
 
   <div class="status-bar">
     <div>
-      <span class="sync-badge" id="syncStatus">✅ Готов к работе</span>
+      <span class="sync-badge" id="syncStatus">🔄 Загрузка...</span>
+      <span style="margin-left: 0.5rem; font-size:0.8rem; color:#64748b;" id="lastSyncTime"></span>
     </div>
     <div style="display: flex; gap: 0.5rem;">
-      <button class="btn" id="refreshBtn">🔄 Обновить</button>
+      <button class="btn" id="refreshBtn">🔄 Обновить данные</button>
       <button class="btn btn-danger" id="clearBtn">🗑 Очистить всё</button>
     </div>
   </div>
@@ -222,13 +223,19 @@
     return `${y}-${m}-${d}`;
   }
 
+  // Загрузка данных из таблицы
   async function loadFromSheet() {
     setSyncStatus('syncing', 'Загрузка...');
     try {
       const resp = await fetch(SCRIPT_URL, { cache: 'no-store' });
-      const data = await resp.json();
+      const text = await resp.text();
+      
+      // Парсим JSON
+      const data = JSON.parse(text);
       
       bookingData = {};
+      
+      // Пропускаем первую строку (заголовки)
       for (let i = 1; i < data.length; i++) {
         const row = data[i];
         if (!row || row.length < 4) continue;
@@ -243,14 +250,18 @@
         bookingData[day][timeSlot][hall] = trainer;
       }
       
-      setSyncStatus('online', 'Данные загружены');
+      setSyncStatus('online', '✅ Данные загружены');
+      document.getElementById('lastSyncTime').textContent = 
+        new Date().toLocaleTimeString('ru-RU');
       renderTable();
     } catch (e) {
-      setSyncStatus('offline', 'Нет связи');
+      console.error('Ошибка загрузки:', e);
+      setSyncStatus('offline', '❌ Нет связи с таблицей');
       renderTable();
     }
   }
 
+  // Отправка данных
   function sendToSheet(day, timeSlot, hall, trainer) {
     const url = SCRIPT_URL + 
       '?action=add' +
@@ -259,29 +270,32 @@
       '&hall=' + encodeURIComponent(hall) +
       '&trainer=' + encodeURIComponent(trainer);
     
-    // Используем fetch с no-cors
+    // Пробуем fetch с no-cors
     fetch(url, { mode: 'no-cors' })
       .then(() => {
-        setSyncStatus('online', 'Сохранено ✅');
+        setSyncStatus('online', '✅ Сохранено');
         showToast('✅ Сохранено: ' + trainer);
       })
       .catch(() => {
-        // Даже если fetch упал, пробуем через Image beacon
+        // Запасной метод
         const img = new Image();
         img.src = url;
-        setSyncStatus('online', 'Сохранено ✅');
+        setSyncStatus('online', '✅ Сохранено');
         showToast('✅ Сохранено: ' + trainer);
       });
   }
 
+  // Очистка
   async function clearAll() {
-    if (!confirm('Удалить ВСЕ записи за июнь?')) return;
+    if (!confirm('Удалить ВСЕ записи за июнь? Это необратимо.')) return;
     try {
       await fetch(SCRIPT_URL + '?action=clear', { mode: 'no-cors' });
-      showToast('✅ Очищено');
-      setTimeout(loadFromSheet, 1000);
+      bookingData = {};
+      renderTable();
+      showToast('✅ Таблица очищена');
+      setTimeout(loadFromSheet, 1500);
     } catch (e) {
-      showToast('❌ Ошибка');
+      showToast('❌ Ошибка очистки');
     }
   }
 
@@ -298,6 +312,7 @@
     setTimeout(() => t.classList.remove('show'), 2000);
   }
 
+  // Отрисовка таблицы
   function renderTable() {
     const wrapper = document.getElementById('tableWrapper');
     let html = '<table><thead><tr><th class="time-col">Время</th>';
@@ -338,6 +353,7 @@
     html += '</tbody></table>';
     wrapper.innerHTML = html;
 
+    // Навешиваем обработчики на все input
     document.querySelectorAll('.cell-input').forEach(inp => {
       inp.addEventListener('change', function() {
         const d = this.dataset.day;
@@ -345,10 +361,12 @@
         const h = this.dataset.hall;
         const v = this.value.trim();
         
+        // Сохраняем локально
         if (!bookingData[d]) bookingData[d] = {};
         if (!bookingData[d][s]) bookingData[d][s] = {};
         bookingData[d][s][h] = v || '';
         
+        // Отправляем на сервер
         if (v) {
           sendToSheet(d, s, h, v);
         }
@@ -360,10 +378,14 @@
     return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
   }
 
+  // Кнопки
   document.getElementById('refreshBtn').addEventListener('click', loadFromSheet);
   document.getElementById('clearBtn').addEventListener('click', clearAll);
 
+  // Загружаем данные при старте
   loadFromSheet();
+  
+  // Автообновление каждые 30 секунд
   setInterval(loadFromSheet, 30000);
 </script>
 
