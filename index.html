@@ -180,10 +180,7 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // ═══════════════ НАСТРОЙКИ ═══════════════
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwq3rQDMywIEtO7bVMtAl0dcKuz5dPA3lpG3Abj4MoxrINdazNDbNlsfgwckvh6d94/exec';
-  const SHEET_CSV_URL = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vR-j1Qs7Hn4dShT0CG9jTtGqA7yVD8bZT1NBjZEHxr1kHoP6ZgeiGdHIUvzq936N6OniJgq7cH9Lrq-/pub?gid=0&single=true&output=csv';
-  // ══════════════════════════════════════════
 
   const YEAR = 2026;
   const MONTH = 5;
@@ -227,16 +224,14 @@
     return `${y}-${m}-${d}`;
   }
 
-  // Загрузка данных через Apps Script JSON
   async function loadFromSheet() {
-    setSyncStatus('syncing', 'Синхронизация...');
+    setSyncStatus('syncing', 'Загрузка...');
     try {
-      const resp = await fetch(SCRIPT_URL + '?action=read', { cache: 'no-store' });
+      const resp = await fetch(SCRIPT_URL, { cache: 'no-store' });
       const data = await resp.json();
       
       bookingData = {};
       
-      // data — это массив массивов: [["Дата","Время","Зал","Тренер"], [...], ...]
       for (let i = 1; i < data.length; i++) {
         const row = data[i];
         if (!row || row.length < 4) continue;
@@ -256,62 +251,42 @@
         new Date().toLocaleTimeString('ru-RU');
       renderTable();
     } catch (e) {
-      console.error('Ошибка загрузки:', e);
-      setSyncStatus('offline', 'Нет связи с таблицей');
-      // Пробуем запасной вариант через CSV
-      tryLoadCSV();
-    }
-  }
-
-  // Запасной вариант — загрузка через CSV
-  async function tryLoadCSV() {
-    try {
-      const resp = await fetch(SHEET_CSV_URL, { cache: 'no-store' });
-      const text = await resp.text();
-      const rows = text.trim().split('\n').slice(1);
-      
-      bookingData = {};
-      for (const row of rows) {
-        const cols = row.split(',');
-        if (cols.length < 4) continue;
-        const day = cols[0].trim();
-        const timeSlot = cols[1].trim();
-        const hall = cols[2].trim();
-        const trainer = cols.slice(3).join(',').trim();
-        
-        if (!day || !timeSlot || !hall) continue;
-        if (!bookingData[day]) bookingData[day] = {};
-        if (!bookingData[day][timeSlot]) bookingData[day][timeSlot] = {};
-        bookingData[day][timeSlot][hall] = trainer;
-      }
-      
-      setSyncStatus('online', 'Данные загружены (CSV)');
-      document.getElementById('lastSyncTime').textContent = 
-        new Date().toLocaleTimeString('ru-RU');
-      renderTable();
-    } catch (e2) {
-      console.error('Ошибка CSV:', e2);
+      console.error('Ошибка:', e);
+      setSyncStatus('offline', 'Нет связи');
       renderTable();
     }
   }
 
-  // Отправить изменение
   async function sendToSheet(day, timeSlot, hall, trainer) {
     try {
-      const url = `${SCRIPT_URL}?action=add&day=${encodeURIComponent(day)}&time=${encodeURIComponent(timeSlot)}&hall=${encodeURIComponent(hall)}&trainer=${encodeURIComponent(trainer)}`;
-      await fetch(url, { mode: 'no-cors' });
-      setSyncStatus('online', 'Сохранено');
+      const formData = new FormData();
+      formData.append('action', 'add');
+      formData.append('day', day);
+      formData.append('time', timeSlot);
+      formData.append('hall', hall);
+      formData.append('trainer', trainer);
+
+      // Используем fetch с mode: 'no-cors' и POST
+      const url = SCRIPT_URL + '?action=add&day=' + encodeURIComponent(day) + 
+                  '&time=' + encodeURIComponent(timeSlot) + 
+                  '&hall=' + encodeURIComponent(hall) + 
+                  '&trainer=' + encodeURIComponent(trainer);
+      
+      await fetch(url, { method: 'GET', mode: 'no-cors' });
+      
+      setSyncStatus('online', 'Сохранено ✅');
+      showToast('✅ Запись сохранена');
     } catch (e) {
+      console.error('Ошибка сохранения:', e);
       setSyncStatus('offline', 'Ошибка сохранения');
-      showToast('⚠️ Не удалось сохранить. Проверьте интернет.');
+      showToast('⚠️ Ошибка сохранения');
     }
   }
 
-  // Очистить всё
   async function clearAll() {
-    if (!confirm('Удалить ВСЕ записи за июнь? Это необратимо.')) return;
+    if (!confirm('Удалить ВСЕ записи за июнь?')) return;
     try {
-      await fetch(`${SCRIPT_URL}?action=clear`, { mode: 'no-cors' });
+      await fetch(SCRIPT_URL + '?action=clear', { method: 'GET', mode: 'no-cors' });
       showToast('✅ Таблица очищена');
       await loadFromSheet();
     } catch (e) {
@@ -329,7 +304,7 @@
     const t = document.getElementById('toast');
     t.textContent = msg;
     t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2500);
+    setTimeout(() => t.classList.remove('show'), 2000);
   }
 
   function renderTable() {
@@ -415,7 +390,6 @@
   document.getElementById('clearBtn').addEventListener('click', clearAll);
   document.getElementById('exportBtn').addEventListener('click', exportCSV);
 
-  // Старт
   loadFromSheet();
   setInterval(loadFromSheet, 30000);
 </script>
