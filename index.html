@@ -257,38 +257,40 @@
     }
   }
 
-  async function sendToSheet(day, timeSlot, hall, trainer) {
-    try {
-      const formData = new FormData();
-      formData.append('action', 'add');
-      formData.append('day', day);
-      formData.append('time', timeSlot);
-      formData.append('hall', hall);
-      formData.append('trainer', trainer);
-
-      // Используем fetch с mode: 'no-cors' и POST
-      const url = SCRIPT_URL + '?action=add&day=' + encodeURIComponent(day) + 
-                  '&time=' + encodeURIComponent(timeSlot) + 
-                  '&hall=' + encodeURIComponent(hall) + 
-                  '&trainer=' + encodeURIComponent(trainer);
-      
-      await fetch(url, { method: 'GET', mode: 'no-cors' });
-      
-      setSyncStatus('online', 'Сохранено ✅');
-      showToast('✅ Запись сохранена');
-    } catch (e) {
-      console.error('Ошибка сохранения:', e);
-      setSyncStatus('offline', 'Ошибка сохранения');
-      showToast('⚠️ Ошибка сохранения');
-    }
+  // ИСПРАВЛЕННАЯ ФУНКЦИЯ ОТПРАВКИ
+  function sendToSheet(day, timeSlot, hall, trainer) {
+    const url = SCRIPT_URL + 
+      '?action=add' +
+      '&day=' + encodeURIComponent(day) +
+      '&time=' + encodeURIComponent(timeSlot) +
+      '&hall=' + encodeURIComponent(hall) +
+      '&trainer=' + encodeURIComponent(trainer);
+    
+    // Используем JSONP-подход через создание скрытого iframe
+    const iframe = document.createElement('iframe');
+    iframe.style.display = 'none';
+    iframe.src = url;
+    document.body.appendChild(iframe);
+    
+    setTimeout(() => {
+      document.body.removeChild(iframe);
+    }, 2000);
+    
+    setSyncStatus('online', 'Сохранено ✅');
+    showToast('✅ Запись сохранена');
   }
 
   async function clearAll() {
     if (!confirm('Удалить ВСЕ записи за июнь?')) return;
     try {
-      await fetch(SCRIPT_URL + '?action=clear', { method: 'GET', mode: 'no-cors' });
+      const iframe = document.createElement('iframe');
+      iframe.style.display = 'none';
+      iframe.src = SCRIPT_URL + '?action=clear';
+      document.body.appendChild(iframe);
+      setTimeout(() => document.body.removeChild(iframe), 2000);
+      
       showToast('✅ Таблица очищена');
-      await loadFromSheet();
+      setTimeout(() => loadFromSheet(), 1500);
     } catch (e) {
       showToast('❌ Ошибка очистки');
     }
