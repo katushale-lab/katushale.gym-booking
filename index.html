@@ -23,129 +23,35 @@
       box-shadow: 0 20px 40px rgba(0,0,0,0.08);
       padding: 1.8rem 1.5rem;
     }
-    h1 {
-      font-size: 2rem;
-      font-weight: 700;
-      color: #0f2b4b;
-      margin-bottom: 0.2rem;
-    }
-    .subtitle {
-      color: #475569;
-      margin-bottom: 1.5rem;
-      font-size: 0.95rem;
-    }
-    .status-bar {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 1.2rem;
-      gap: 1rem;
-    }
-    .sync-badge {
-      padding: 0.4rem 1rem;
-      border-radius: 20px;
-      font-size: 0.85rem;
-      font-weight: 500;
-    }
+    h1 { font-size: 2rem; font-weight: 700; color: #0f2b4b; margin-bottom: 0.2rem; }
+    .subtitle { color: #475569; margin-bottom: 1.5rem; font-size: 0.95rem; }
+    .status-bar { display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; margin-bottom: 1.2rem; gap: 1rem; }
+    .sync-badge { padding: 0.4rem 1rem; border-radius: 20px; font-size: 0.85rem; font-weight: 500; }
     .online { background: #dcfce7; color: #166534; }
     .offline { background: #fee2e2; color: #991b1b; }
     .syncing { background: #fef9c3; color: #854d0e; }
-    .btn {
-      padding: 0.5rem 1.2rem;
-      border-radius: 30px;
-      border: 1px solid #d1d5db;
-      background: white;
-      font-weight: 500;
-      cursor: pointer;
-      transition: 0.2s;
-      font-size: 0.9rem;
-    }
+    .btn { padding: 0.5rem 1.2rem; border-radius: 30px; border: 1px solid #d1d5db; background: white; font-weight: 500; cursor: pointer; transition: 0.2s; font-size: 0.9rem; }
     .btn:hover { background: #f3f4f6; border-color: #9ca3af; }
     .btn-danger { background: #fef2f2; border-color: #fecaca; color: #dc2626; }
     .btn-danger:hover { background: #fee2e2; }
-    .legend {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 1.5rem;
-      margin-bottom: 1.5rem;
-      font-size: 0.85rem;
-    }
+    .legend { display: flex; flex-wrap: wrap; gap: 1.5rem; margin-bottom: 1.5rem; font-size: 0.85rem; }
     .legend-item { display: flex; align-items: center; gap: 0.4rem; }
     .dot { width: 12px; height: 12px; border-radius: 4px; }
     .dot-big { background: #2563eb; }
     .dot-medium { background: #0d9488; }
     .dot-acro { background: #d97706; }
     .dot-square { background: #7c3aed; }
-    .table-wrapper {
-      overflow-x: auto;
-      border: 1px solid #e5e7eb;
-      border-radius: 14px;
-      max-height: 70vh;
-      overflow-y: auto;
-    }
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 0.75rem;
-      min-width: 1400px;
-    }
-    th {
-      background: #f8fafc;
-      padding: 0.55rem 0.3rem;
-      text-align: center;
-      border: 1px solid #d1d5db;
-      position: sticky;
-      top: 0;
-      z-index: 3;
-      font-weight: 650;
-    }
-    .time-col {
-      background: #f1f5f9;
-      width: 85px;
-      font-weight: 700;
-      z-index: 4;
-      left: 0;
-      position: sticky;
-    }
-    td {
-      border: 1px solid #e5e7eb;
-      padding: 0.25rem;
-      text-align: center;
-      background: white;
-    }
-    .cell-input {
-      width: 100%;
-      border: none;
-      background: transparent;
-      font-size: 0.72rem;
-      text-align: center;
-      padding: 0.3rem 0.1rem;
-      border-radius: 6px;
-      outline: none;
-      font-weight: 500;
-    }
-    .cell-input:focus {
-      background: #eff6ff;
-      box-shadow: 0 0 0 2px #3b82f6;
-    }
+    .table-wrapper { overflow-x: auto; border: 1px solid #e5e7eb; border-radius: 14px; max-height: 70vh; overflow-y: auto; }
+    table { width: 100%; border-collapse: collapse; font-size: 0.75rem; min-width: 1400px; }
+    th { background: #f8fafc; padding: 0.55rem 0.3rem; text-align: center; border: 1px solid #d1d5db; position: sticky; top: 0; z-index: 3; font-weight: 650; }
+    .time-col { background: #f1f5f9; width: 85px; font-weight: 700; z-index: 4; left: 0; position: sticky; }
+    td { border: 1px solid #e5e7eb; padding: 0.25rem; text-align: center; background: white; }
+    .cell-input { width: 100%; border: none; background: transparent; font-size: 0.72rem; text-align: center; padding: 0.3rem 0.1rem; border-radius: 6px; outline: none; font-weight: 500; }
+    .cell-input:focus { background: #eff6ff; box-shadow: 0 0 0 2px #3b82f6; }
     .cell-input::placeholder { color: #cbd5e1; font-style: italic; }
     .day-header { font-weight: 700; background: #f8fafc; }
     .weekend { background: #fff7ed; }
-    .toast {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      background: #1e293b;
-      color: white;
-      padding: 0.7rem 1.4rem;
-      border-radius: 12px;
-      font-size: 0.9rem;
-      z-index: 99;
-      opacity: 0;
-      transition: opacity 0.3s;
-      pointer-events: none;
-    }
+    .toast { position: fixed; bottom: 20px; right: 20px; background: #1e293b; color: white; padding: 0.7rem 1.4rem; border-radius: 12px; font-size: 0.9rem; z-index: 99; opacity: 0; transition: opacity 0.3s; pointer-events: none; }
     .toast.show { opacity: 1; }
   </style>
 </head>
@@ -165,11 +71,10 @@
   <div class="status-bar">
     <div>
       <span class="sync-badge" id="syncStatus">🔄 Загрузка...</span>
-      <span style="margin-left: 0.5rem; font-size:0.8rem; color:#64748b;" id="lastSyncTime"></span>
     </div>
     <div style="display: flex; gap: 0.5rem;">
-      <button class="btn" id="refreshBtn">🔄 Обновить данные</button>
-      <button class="btn btn-danger" id="clearBtn">🗑 Очистить всё</button>
+      <button class="btn" id="refreshBtn">🔄 Обновить</button>
+      <button class="btn btn-danger" id="clearBtn">🗑 Очистить</button>
     </div>
   </div>
 
@@ -181,213 +86,124 @@
 <script>
   const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwq3rQDMywIEtO7bVMtAl0dcKuz5dPA3lpG3Abj4MoxrINdazNDbNlsfgwckvh6d94/exec';
 
-  const YEAR = 2026;
-  const MONTH = 5;
+  const YEAR = 2026, MONTH = 5;
   const HALLS = ["Большой", "Средний", "Акро", "Квадратный"];
-  const START_HOUR = 9;
-  const END_HOUR = 23;
+  const START_HOUR = 9, END_HOUR = 23;
 
   function generateTimeSlots() {
     const slots = [];
-    for (let h = START_HOUR; h < END_HOUR; h++) {
+    for (let h = START_HOUR; h < END_HOUR; h++)
       for (let m = 0; m < 60; m += 30) {
-        const start = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
-        const endH = m === 30 ? h + 1 : h;
-        const endM = m === 30 ? 0 : 30;
-        const end = `${String(endH).padStart(2,'0')}:${String(endM).padStart(2,'0')}`;
-        slots.push(`${start}-${end}`);
+        const s = `${String(h).padStart(2,'0')}:${String(m).padStart(2,'0')}`;
+        const eh = m === 30 ? h + 1 : h, em = m === 30 ? 0 : 30;
+        slots.push(`${s}-${String(eh).padStart(2,'0')}:${String(em).padStart(2,'0')}`);
       }
-    }
     return slots;
   }
 
   const TIME_SLOTS = generateTimeSlots();
 
-  function getDaysInMonth(year, month) {
-    const days = [];
-    const d = new Date(year, month, 1);
-    while (d.getMonth() === month) {
-      days.push(new Date(d));
-      d.setDate(d.getDate() + 1);
-    }
+  function getDaysInMonth(y, m) {
+    const days = [], d = new Date(y, m, 1);
+    while (d.getMonth() === m) { days.push(new Date(d)); d.setDate(d.getDate() + 1); }
     return days;
   }
 
   const DAYS = getDaysInMonth(YEAR, MONTH);
   let bookingData = {};
 
-  function getDayKey(date) {
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2,'0');
-    const d = String(date.getDate()).padStart(2,'0');
-    return `${y}-${m}-${d}`;
+  function getDayKey(d) {
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
   }
 
-  // Загрузка данных из таблицы
-  async function loadFromSheet() {
+  // Загрузка через JSONP
+  function loadFromSheet() {
     setSyncStatus('syncing', 'Загрузка...');
-    try {
-      const resp = await fetch(SCRIPT_URL, { cache: 'no-store' });
-      const text = await resp.text();
-      
-      // Парсим JSON
-      const data = JSON.parse(text);
-      
+    const callbackName = 'cb' + Date.now();
+    window[callbackName] = function(data) {
       bookingData = {};
-      
-      // Пропускаем первую строку (заголовки)
       for (let i = 1; i < data.length; i++) {
-        const row = data[i];
-        if (!row || row.length < 4) continue;
-        const day = String(row[0]).trim();
-        const timeSlot = String(row[1]).trim();
-        const hall = String(row[2]).trim();
-        const trainer = String(row[3] || '').trim();
-        
-        if (!day || !timeSlot || !hall) continue;
+        const r = data[i];
+        if (!r || r.length < 4) continue;
+        const day = String(r[0]).trim(), slot = String(r[1]).trim();
+        const hall = String(r[2]).trim(), trainer = String(r[3]||'').trim();
+        if (!day || !slot || !hall) continue;
         if (!bookingData[day]) bookingData[day] = {};
-        if (!bookingData[day][timeSlot]) bookingData[day][timeSlot] = {};
-        bookingData[day][timeSlot][hall] = trainer;
+        if (!bookingData[day][slot]) bookingData[day][slot] = {};
+        bookingData[day][slot][hall] = trainer;
       }
-      
-      setSyncStatus('online', '✅ Данные загружены');
-      document.getElementById('lastSyncTime').textContent = 
-        new Date().toLocaleTimeString('ru-RU');
+      setSyncStatus('online', '✅ Загружено');
       renderTable();
-    } catch (e) {
-      console.error('Ошибка загрузки:', e);
-      setSyncStatus('offline', '❌ Нет связи с таблицей');
-      renderTable();
-    }
+      delete window[callbackName];
+      document.body.removeChild(document.getElementById(callbackName));
+    };
+    const s = document.createElement('script');
+    s.id = callbackName;
+    s.src = SCRIPT_URL + '?callback=' + callbackName;
+    document.body.appendChild(s);
   }
 
-  // Отправка данных
-  function sendToSheet(day, timeSlot, hall, trainer) {
-    const url = SCRIPT_URL + 
-      '?action=add' +
-      '&day=' + encodeURIComponent(day) +
-      '&time=' + encodeURIComponent(timeSlot) +
-      '&hall=' + encodeURIComponent(hall) +
+  function sendToSheet(day, slot, hall, trainer) {
+    const url = SCRIPT_URL + '?action=add&day=' + encodeURIComponent(day) +
+      '&time=' + encodeURIComponent(slot) + '&hall=' + encodeURIComponent(hall) +
       '&trainer=' + encodeURIComponent(trainer);
-    
-    // Пробуем fetch с no-cors
-    fetch(url, { mode: 'no-cors' })
-      .then(() => {
-        setSyncStatus('online', '✅ Сохранено');
-        showToast('✅ Сохранено: ' + trainer);
-      })
-      .catch(() => {
-        // Запасной метод
-        const img = new Image();
-        img.src = url;
-        setSyncStatus('online', '✅ Сохранено');
-        showToast('✅ Сохранено: ' + trainer);
-      });
+    const img = new Image(); img.src = url;
+    showToast('✅ ' + trainer);
   }
 
-  // Очистка
-  async function clearAll() {
-    if (!confirm('Удалить ВСЕ записи за июнь? Это необратимо.')) return;
-    try {
-      await fetch(SCRIPT_URL + '?action=clear', { mode: 'no-cors' });
-      bookingData = {};
-      renderTable();
-      showToast('✅ Таблица очищена');
-      setTimeout(loadFromSheet, 1500);
-    } catch (e) {
-      showToast('❌ Ошибка очистки');
-    }
+  function clearAll() {
+    if (!confirm('Удалить ВСЕ записи?')) return;
+    const img = new Image();
+    img.src = SCRIPT_URL + '?action=clear';
+    bookingData = {};
+    renderTable();
+    showToast('✅ Очищено');
+    setTimeout(loadFromSheet, 1500);
   }
 
-  function setSyncStatus(state, text) {
-    const el = document.getElementById('syncStatus');
-    el.textContent = text;
-    el.className = 'sync-badge ' + state;
-  }
+  function setSyncStatus(s, t) { const e = document.getElementById('syncStatus'); e.textContent = t; e.className = 'sync-badge ' + s; }
+  function showToast(m) { const t = document.getElementById('toast'); t.textContent = m; t.classList.add('show'); setTimeout(() => t.classList.remove('show'), 2000); }
+  function escHtml(s) { return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
 
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2000);
-  }
-
-  // Отрисовка таблицы
   function renderTable() {
-    const wrapper = document.getElementById('tableWrapper');
-    let html = '<table><thead><tr><th class="time-col">Время</th>';
-
-    DAYS.forEach(day => {
-      const dow = day.toLocaleDateString('ru-RU', { weekday: 'short' });
-      const dnum = day.getDate();
-      const isWeekend = day.getDay() === 0 || day.getDay() === 6;
-      html += `<th class="day-header${isWeekend ? ' weekend' : ''}" colspan="4">${dnum} ${dow}</th>`;
+    const w = document.getElementById('tableWrapper');
+    let h = '<table><thead><tr><th class="time-col">Время</th>';
+    DAYS.forEach(d => {
+      const dow = d.toLocaleDateString('ru-RU',{weekday:'short'});
+      h += `<th class="day-header${d.getDay()===0||d.getDay()===6?' weekend':''}" colspan="4">${d.getDate()} ${dow}</th>`;
     });
-    html += '</tr><tr><th class="time-col"></th>';
-
-    DAYS.forEach(() => {
-      HALLS.forEach(h => {
-        let cls = '';
-        if (h === 'Большой') cls = 'dot-big';
-        else if (h === 'Средний') cls = 'dot-medium';
-        else if (h === 'Акро') cls = 'dot-acro';
-        else cls = 'dot-square';
-        html += `<th style="font-size:0.7rem;"><span class="dot ${cls}" style="display:inline-block;width:9px;height:9px;margin-right:4px;"></span>${h}</th>`;
-      });
-    });
-    html += '</tr></thead><tbody>';
-
+    h += '</tr><tr><th class="time-col"></th>';
+    DAYS.forEach(() => HALLS.forEach(hall => {
+      let c = ''; if (hall==='Большой') c='dot-big'; else if (hall==='Средний') c='dot-medium'; else if (hall==='Акро') c='dot-acro'; else c='dot-square';
+      h += `<th style="font-size:0.7rem;"><span class="dot ${c}" style="display:inline-block;width:9px;height:9px;margin-right:4px;"></span>${hall}</th>`;
+    }));
+    h += '</tr></thead><tbody>';
     TIME_SLOTS.forEach(slot => {
-      html += '<tr><td class="time-col">' + slot + '</td>';
+      h += '<tr><td class="time-col">'+slot+'</td>';
       DAYS.forEach(day => {
         const dk = getDayKey(day);
         HALLS.forEach(hall => {
-          const val = bookingData[dk]?.[slot]?.[hall] || '';
-          html += `<td><input class="cell-input" value="${escHtml(val)}" 
-                      placeholder="—" data-day="${dk}" data-slot="${slot}" data-hall="${hall}"></td>`;
+          const v = bookingData[dk]?.[slot]?.[hall] || '';
+          h += `<td><input class="cell-input" value="${escHtml(v)}" placeholder="—" data-day="${dk}" data-slot="${slot}" data-hall="${hall}"></td>`;
         });
       });
-      html += '</tr>';
+      h += '</tr>';
     });
-
-    html += '</tbody></table>';
-    wrapper.innerHTML = html;
-
-    // Навешиваем обработчики на все input
+    h += '</tbody></table>';
+    w.innerHTML = h;
     document.querySelectorAll('.cell-input').forEach(inp => {
       inp.addEventListener('change', function() {
-        const d = this.dataset.day;
-        const s = this.dataset.slot;
-        const h = this.dataset.hall;
-        const v = this.value.trim();
-        
-        // Сохраняем локально
-        if (!bookingData[d]) bookingData[d] = {};
-        if (!bookingData[d][s]) bookingData[d][s] = {};
-        bookingData[d][s][h] = v || '';
-        
-        // Отправляем на сервер
-        if (v) {
-          sendToSheet(d, s, h, v);
-        }
+        const d=this.dataset.day, s=this.dataset.slot, hl=this.dataset.hall, v=this.value.trim();
+        if(!bookingData[d]) bookingData[d]={}; if(!bookingData[d][s]) bookingData[d][s]={};
+        bookingData[d][s][hl]=v||'';
+        if(v) sendToSheet(d,s,hl,v);
       });
     });
   }
 
-  function escHtml(s) {
-    return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  // Кнопки
   document.getElementById('refreshBtn').addEventListener('click', loadFromSheet);
   document.getElementById('clearBtn').addEventListener('click', clearAll);
-
-  // Загружаем данные при старте
   loadFromSheet();
-  
-  // Автообновление каждые 30 секунд
-  setInterval(loadFromSheet, 30000);
 </script>
-
 </body>
 </html>
